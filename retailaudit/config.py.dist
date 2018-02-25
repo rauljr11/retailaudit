@@ -1,0 +1,11 @@
+#
+# Cloud Site Config
+#
+
+HOST="locahost"
+PORT=8000
+API_URL="http://api.neuralmechanics.net/retail_audit/v2"
+SKU_URL="/skus"
+AUDIT_URL="/audit"
+TRANSACTIONS_URL = "/transactions"
+IMAGE_URL = "/image/transid"

@@ -1,0 +1,89 @@
+{% extends "index.html" %}
+
+{% block content %}
+	<div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center lead-header">
+		<p class="lead">Simple upload an image or type an image URL and see how the CloudSight API works.</p>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+			    <div id="previousCarousel" class="carousel slide" data-ride="carousel" data-interval="9000">
+			        <div class="carousel-inner row w-100 mx-auto" role="listbox">
+			        </div>
+			        <a class="carousel-control-prev" href="#previousCarousel" role="button" data-slide="prev">
+			            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+			        </a>
+			        <a class="carousel-control-next text-faded" href="#previousCarousel" role="button" data-slide="next">
+			            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+			        </a>
+			    </div>
+			    <a href="#deleteHistory" class="btn btn-link float-right" id="deleteHistory">Clear History</a>
+			</div>
+		</div>
+		<div class="card-deck mb-3 text-center">
+			<div class="col-sm-6" id="formData">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<input type="text" name="product_sku" id="productSKU" class="form-control" placeholder="Search Product Here">
+					</div>
+				</div>
+				<div class="card mb-4 box-shadow">
+					<div class="img-template" id="img-upload">
+						<div class="inner-text">
+							<div id="textIndicator">
+								<div class="drag">Drag image here</div>
+								<div class="enter-url">or enter a URL below and click Upload</div>	
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="form-group">
+						<input type="text" name="image_url" id="imageUrl" class="form-control" placeholder="Enter Image URL here">
+					</div>
+					<input type="hidden" name="product_id" id="productId" value="">
+					<input type="hidden" name="image_data" id="imageData" value="">
+					<button type="button" class="btn btn-danger custom-danger" id="submitImage">UPLOAD</button>
+				</div>
+			</div>
+			<div class="col-sm-6 text-left">
+				<div class="row">
+					<div class="col-sm-12 text-center">
+						<h1>Result</h1>
+					</div>
+					<div class="clearfix"></div>
+					<hr/>
+					<div class="col-sm-6 text-center result-container">
+						<div class="result-details">
+							<h2>Presence</h2>
+							<h1 id="presence"></h1>
+						</div>
+					</div>	
+					<div class="col-sm-6 text-center result-container">
+						<div class="result-details">
+							<h2>Count</h2>
+							<h1 id="count"></h1>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	var uploadLocation = "{{ url_for('upload_image') }}";
+	var skuListLocation = "{{ url_for('get_skus') }}";
+	var sendToApiLocation = "{{ url_for('send_to_api') }}";
+	var transactionsLocation = "{{ url_for('get_transactions') }}";
+	var baseImgUrl = "{{ args.img_url_base }}";
+</script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+{% endblock %}
