@@ -14,7 +14,7 @@ var init_dropzone = function() {
     });
 
     myDropzone.on("addedfile", function(file) {
-        console.log(file);
+        $('#imageUrl').val('');
         $('.dz-image-preview').remove();
         $('div#textIndicator').hide();
         $('.dz-image').siblings().hide();
@@ -166,42 +166,54 @@ function b64toBlob(b64Data, contentType, sliceSize) {
 
 function getDataImageFromUrl (callBack) {
     var fromUrl = $('#imageUrl').val();
-    var dataImage = '';
     if (fromUrl == '') {
-        return dataImage;
+        callBack('', '', '');
     }
 
-    var image = new Image();
-    image.crossOrigin = 'use-credentials';
-    var canvas = document.createElement("canvas"), canvasContext = canvas.getContext("2d");
-
-    image.onload = function () {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        canvasContext.drawImage(image, 0, 0, image.width, image.height);
-        var dataImage = canvas.toDataURL();
-        var block1 = image.src.split('/');
-        filename = block1[block1.length-1];
-        if (filename.indexOf('?') > 0) {
-            filename = filename.split('?')[0];
-        }
-        callBack(dataImage, filename, image.src);
+    var block1 = fromUrl.split('/');
+    var filename = block1[block1.length-1];
+    if (filename.indexOf('?') > 0) {
+        filename = filename.split('?')[0];
     }
-    image.src = fromUrl;
+    callBack('', filename, fromUrl);
+
+    // var dataImage = '';
+    // var image = new Image();
+    // image.crossOrigin = 'use-credentials';
+    // // var canvas = document.createElement("canvas"), canvasContext = canvas.getContext("2d");
+
+    // image.onload = function () {
+    //     // canvas.width = image.width;
+    //     // canvas.height = image.height;
+    //     // canvasContext.drawImage(image, 0, 0, image.width, image.height);
+    //     // var dataImage = canvas.toDataURL();
+    //     var block1 = image.src.split('/');
+    //     filename = block1[block1.length-1];
+    //     if (filename.indexOf('?') > 0) {
+    //         filename = filename.split('?')[0];
+    //     }
+    //     callBack(dataImage, filename, image.src);
+    // }
+    // image.src = fromUrl;
 }
 
-function sendToAPI (imageData, productId) {
+function sendToAPI (imageData, productId, fromUrl=false) {
     var formData = new FormData();
     var fileName = $('#imageData').attr('data-attr-filename');
-    // // get the real base64 content of the file
-    var block = imageData.split(";");
-    var contentType = block[0].split(":")[1]; // In this case "image/gif"
-    var realData = block[1].split(",")[1]; // In this case "R0lGODlhPQBEAPeoAJosM...."
-
-    var blob = b64toBlob(realData, contentType); // Convert it to a blob to upload
-    formData.append("file", blob, fileName.replace('.jpg', '.png'));
+    
     formData.append("product_id", productId);
 
+    if (!fromUrl) {
+        // get the real base64 content of the file
+        var block = imageData.split(";");
+        var contentType = block[0].split(":")[1]; // In this case "image/gif"
+        var realData = block[1].split(",")[1]; // In this case "R0lGODlhPQBEAPeoAJosM...."
+        var blob = b64toBlob(realData, contentType); // Convert it to a blob to upload
+        formData.append("file", blob, fileName.replace('.jpg', '.png'));
+    } else {
+        formData.append("product_url", imageData);
+    }
+        
     do_request('POST', sendToApiLocation, formData, 
         function(data){
             if (data.status == 'error') {
@@ -255,12 +267,12 @@ $(document).ready(function(){
         // try to get the data from the url
         if (imageData == '') {
             getDataImageFromUrl(function(dataImage, filename, url) {
-                if (dataImage == '') {
+                if (url == '') {
                     displayMessage('error', 'Product image is required');
                 } else {
                     $('#imageData').attr('data-attr-filename', filename);
                     preloadImage(filename, url);
-                    sendToAPI(dataImage, productId);
+                    sendToAPI(url, productId, true);
                 }    
             });
         } else {

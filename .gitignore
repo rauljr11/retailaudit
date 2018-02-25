@@ -1,0 +1,12 @@
+retailaudit/config.py
+retailaudit/config.pyc
+api_v2.txt
+id_rsa_personal
+id_rsa_personal.pub
+retail-audit-issues.txt
+retail-audit.txt
+retail-audit_0.2.txt
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc

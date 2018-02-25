@@ -9,13 +9,24 @@ body {
 nav a.p-2:hover {
     font-weight: 500;
     text-decoration: none;
-    border-bottom: 3px solid #ff061e;
+    border-bottom: 3px solid #3b3e99;
 }
 
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
+}
+
+.nueral-logo {
+  width: 100px;
+}
+
+.logo-sub-text {
+  font-size: 0.9rem;
+  text-align: center;
+  line-height: 7px;
+  color: #3b3e99;
 }
 
 .container {
@@ -79,15 +90,17 @@ nav a.p-2:hover {
 }
 
 .success {
-  background: rgba(0, 230, 10, 0.1);
-  border-color: #028C08;
-  color: #02D10B;
+  background: rgba(0, 39, 230, 0.1);
+  border-color: #3b3e99;
+  color: #575bd8;
+  font-weight: 900px;
 }
 
 .error {
   background: rgba(245, 40, 20, 0.1);
   border-color: #B71502;
   color: #D01702;
+  font-weight: 900px;
 }
 
 .message-container .info-message {
@@ -113,8 +126,8 @@ nav a.p-2:hover {
 	width: 40%;
     border-radius: 20px;
     float: left;
-    background-color: #ff061e;	
-    border-color: #ff061e;
+    background-color: #3b3e99;	
+    border-color: #3b3e99;
 }
 
 .border-top { border-top: 1px solid #e5e5e5; }
@@ -131,26 +144,38 @@ nav a.p-2:hover {
 
 .result-container .result-details {
   position: relative;
-  display: table-cell;
-  vertical-align: middle;
+  display: block;
+  /* vertical-align: middle; */
+  margin-top: 20px;
+}
+
+.result-container .result-details > h2,
+.result-container .result-details > h1 {
+  color: #3b3e99;
 }
 
 .ui-widget-content { 
   background: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
-  border: 1px solid #ced4da;
+  border: 1px solid #ced4da !important;
+  max-width: 420px;
+  border-radius: 3px;
 }
 
 .ui-widget-content .ui-menu-item {
-  font-size: 0.8rem;
+  font-size: 1rem;
+  padding: 0;
+}
+
+.ui-menu .ui-menu-item-wrapper {
   padding: 5px 10px;
 }
 
 .ui-state-active, 
 .ui-widget-content .ui-state-active {
-  background: #fff;
-  color: #ced4da;
-  border: 1px solid #fff;
+  background: #3b3e99;
+  color: #fff;
+  border: 1px solid #3b3e99;
   font-weight: normal;
 }
 
@@ -162,6 +187,21 @@ nav a.p-2:hover {
 .carousel .carousel-control-next {
   width: 5%;
   background: rgba(0,0,0, 0.5);
+}
+
+.result-area {
+  border: 1px solid #fff;
+  height: 354px;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.bg-theme {
+  background: #3b3e99;
+}
+
+.bg-theme > h1 {
+  color: #fff;
 }
 
 @media (min-width: 768px) {
