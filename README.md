@@ -1,5 +1,5 @@
 # retailaudit
-Buzzin work order management and fulfillment
+Retail Audit
 
 # Requirements
 1. python
