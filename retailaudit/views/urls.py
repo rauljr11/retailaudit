@@ -13,6 +13,7 @@ from retailaudit.views.api import skus_lists, transaction_lists
 def index():
 	args = {}
 	args['img_url_base'] = app.config['API_URL']+app.config['IMAGE_URL']
+	args['transaction_per_page'] = app.config['TRANSACTION_PER_PAGE']
 	return render_template('pages/audit.html', args=args)
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -64,8 +65,10 @@ def send_to_api():
 @app.route('/transactions', methods=['GET','DELETE'])
 def get_transactions():
 	try:
-		data = transaction_lists(request.method)
-		return json.dumps(data['data'])
+		p = request.args.get('start')
+		l = request.args.get('length')
+		data = transaction_lists(request.method, p, l)
+		return json.dumps(data)
 	except Exception, e:
 		app.dbg(e);
 		return json.dumps({'status': 'error', 'message': 'Server returned an error'})

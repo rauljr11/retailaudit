@@ -204,6 +204,52 @@ nav a.p-2:hover {
   color: #fff;
 }
 
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto;
+}
+
+.busy-container {
+  position: relative;
+  display: table-cell;
+  width: 125px;
+  height: 125px;
+  vertical-align: middle;
+}
+
+.busy-overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  top: 0;
+  display: none;
+}
+
+.active-process {
+  display: table !important;
+}
+
+#transactionHistory {
+  margin: 10px 0;
+}
+
+#transactionHistory .transaction-pagination {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 @media (min-width: 768px) {
 
     /* show 3 items */

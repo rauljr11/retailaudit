@@ -6,9 +6,21 @@
 	</div>
 
 	<div class="container">
-		<div class="row">
+		<div class="row" id="transactionHistory">
 			<div class="col-sm-12">
-			    <div id="previousCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+		    	<div class="transaction-body">
+		    		
+		    	</div>
+			</div>
+			<div class="clearfix"></div>
+			<div class="col-sm-10">
+	    		<div class="transaction-pagination">
+		    		<nav aria-label="Page navigation">
+						<ul class="pagination">
+						</ul>
+					</nav>
+		    	</div>
+<!-- 			    <div id="previousCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
 			        <div class="carousel-inner row w-100 mx-auto" role="listbox">
 			        </div>
 			        <a class="carousel-control-prev" href="#previousCarousel" role="button" data-slide="prev">
@@ -19,8 +31,10 @@
 			            <span class="carousel-control-next-icon" aria-hidden="true"></span>
 						<span class="sr-only">Next</span>
 			        </a>
-			    </div>
-			    <a href="#deleteHistory" class="btn btn-link float-right" id="deleteHistory">Clear History</a>
+			    </div> -->
+			</div>
+			<div class="col-sm-2">
+				<a href="#deleteHistory" class="btn btn-link float-right" id="deleteHistory">Clear History</a>
 			</div>
 		</div>
 		<div class="card-deck mb-3 text-center">
@@ -82,6 +96,7 @@
 	var sendToApiLocation = "{{ url_for('send_to_api') }}";
 	var transactionsLocation = "{{ url_for('get_transactions') }}";
 	var baseImgUrl = "{{ args.img_url_base }}";
+	var transactionPerPage = parseInt("{{args.transaction_per_page}}");
 </script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>

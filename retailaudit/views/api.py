@@ -37,7 +37,11 @@ def skus_lists():
 
 		return {'data': response, 'status': 'success'}
 
-def transaction_lists(method):
-	transaction_url = app.config['API_URL']+app.config['TRANSACTIONS_URL']
+def transaction_lists(method, page, perPage):
+	if (method == "DELETE") :
+		transaction_url = app.config['API_URL']+app.config['TRANSACTIONS_URL']
+	else:
+		transaction_url = app.config['API_URL']+app.config['TRANSACTIONS_URL']+'?start='+page+'&length='+perPage
+	
 	data = do_request(method, transaction_url, {'Content-type': 'application/json'})
 	return data

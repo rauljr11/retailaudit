@@ -37,50 +37,27 @@ var init_dropzone = function() {
     });    
 };
 
-var init_transactions = function() {
-    do_request('GET', transactionsLocation, null, function(data) {
-        console.log(data)
+var init_transactions = function(page, perPage) {
+    var urlTransaction = transactionsLocation+'?start='+page+'&length='+perPage;
+    busyIndicator(true);
+    do_request('GET', urlTransaction, null, function(data) {
+        var list = data.data;
+        var totalItems = data.range.total;
+        var pages = Math.ceil(totalItems/data.range.length);
+        var thumbnailParent = $('#transactionHistory div.transaction-body');
+        var paginationEl = $('ul.pagination');
+        var disabled = '';
 
-        var carouselEl = $('#previousCarousel');
-        var slidesParent = $('#previousCarousel > div.carousel-inner');
+        thumbnailParent.html(''); //we remove the current content of the thumbnail
 
-        carouselEl.carousel("pause").removeData();
-        slidesParent.html('');
-        for (var x = 0 in data) {
-            var imgUrl = baseImgUrl.replace('transid',data[x].trans_id)
-            slidesParent.append('<div class="carousel-item col-md-2"><img id="prevTrans" class="img-fluid mx-auto d-block" src="'+imgUrl+'" alt="'+data[x].fname+'" data-attr-presence="'+data[x].result.presence+'" data-attr-count="'+data[x].result.count+'"></div>');
+        //display the fecth history in the thumbnail container
+        for (var x = 0 in list) {
+            var imgUrl = baseImgUrl.replace('transid',list[x].trans_id);
+            thumbnailParent.append('<div class="transaction-item col-sm-2 float-left"><img id="prevTrans" class="img-fluid mx-auto d-block" src="'+imgUrl+'" alt="'+list[x].fname+'" list-attr-presence="'+list[x].result.presence+'" list-attr-count="'+list[x].result.count+'"></div>');
         }
 
-        slidesParent.children('div:nth(0)').addClass('active');
-        carouselEl.carousel(0);
-
-        carouselEl.on('slide.bs.carousel', function (e) {
-            var $e = $(e.relatedTarget);
-            var idx = $e.index();
-            var itemsPerSlide = 6;
-            var totalItems = $('.carousel-item').length;
-            
-            if (idx >= totalItems-(itemsPerSlide-1)) {
-                var it = itemsPerSlide - (totalItems - idx);
-                for (var i=0; i<it; i++) {
-                    // append slides to end
-                    if (e.direction=="left") {
-                        $('.carousel-item').eq(i).appendTo('.carousel-inner');
-                    }
-                    else {
-                        $('.carousel-item').eq(0).appendTo('.carousel-inner');
-                    }
-                }
-            }
-        }); 
-
-        if ($('.carousel-item').length > 0) {
-            $('#deleteHistory').show();
-        } else {
-            $('#deleteHistory').hide();
-        }
-
-        slidesParent.on('click', 'img#prevTrans', function(e){
+        //bind click event on the images for diplay
+        thumbnailParent.on('click', 'img#prevTrans', function(e){
             e.preventDefault();
             e.stopPropagation();
             preloadImage($(this).attr('alt'), $(this).attr('src'));
@@ -88,8 +65,76 @@ var init_transactions = function() {
             $('h1#count').html($(this).attr('data-attr-count'));
         });
 
+        //contruct pagination
+        paginationEl.html('');
+        for (var x = 0; x<pages; x++) {
+            var active = (((x*data.range.length))==page) ? 'active' : '';
+            paginationEl.append('<li class="page-item '+active+'"><a class="page-link" href="#" data-attr-start="'+(x*data.range.length)+'" data-attr-length="'+data.range.length+'">'+(x+1)+'</a></li>');
+        }
+        
+        disabled = (page == 0) ? 'disabled' : '';
+        paginationEl.prepend('<li class="page-item '+disabled+'"><a class="page-link" href="#" aria-label="Previous" data-attr-start="'+(page-data.range.length)+'" data-attr-length="'+data.range.length+'"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>');
+
+        disabled = (page == pages) ? 'disabled' : '';
+        paginationEl.append('<li class="page-item '+disabled+'"><a class="page-link" href="#" aria-label="Next" data-attr-start="'+(page+data.range.length)+'" data-attr-length="'+data.range.length+'"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>');
+
+
+        paginationEl.on('click', 'a.page-link', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            init_transactions($(this).attr('data-attr-start'), $(this).attr('data-attr-length'));
+        });
+        busyIndicator(false);
+        // var carouselEl = $('#previousCarousel');
+        // var slidesParent = $('#previousCarousel > div.carousel-inner');
+
+        // carouselEl.carousel("pause").removeData();
+        // slidesParent.html('');
+        // for (var x = 0 in data) {
+        //     var imgUrl = baseImgUrl.replace('transid',data[x].trans_id)
+        //     slidesParent.append('<div class="carousel-item col-md-2"><img id="prevTrans" class="img-fluid mx-auto d-block" src="'+imgUrl+'" alt="'+data[x].fname+'" data-attr-presence="'+data[x].result.presence+'" data-attr-count="'+data[x].result.count+'"></div>');
+        // }
+
+        // slidesParent.children('div:nth(0)').addClass('active');
+        // carouselEl.carousel(0);
+
+        // carouselEl.on('slide.bs.carousel', function (e) {
+        //     var $e = $(e.relatedTarget);
+        //     var idx = $e.index();
+        //     var itemsPerSlide = 6;
+        //     var totalItems = $('.carousel-item').length;
+            
+        //     if (idx >= totalItems-(itemsPerSlide-1)) {
+        //         var it = itemsPerSlide - (totalItems - idx);
+        //         for (var i=0; i<it; i++) {
+        //             // append slides to end
+        //             if (e.direction=="left") {
+        //                 $('.carousel-item').eq(i).appendTo('.carousel-inner');
+        //             }
+        //             else {
+        //                 $('.carousel-item').eq(0).appendTo('.carousel-inner');
+        //             }
+        //         }
+        //     }
+        // }); 
+
+        // if ($('.carousel-item').length > 0) {
+        //     $('#deleteHistory').show();
+        // } else {
+        //     $('#deleteHistory').hide();
+        // }
+
+        // slidesParent.on('click', 'img#prevTrans', function(e){
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //     preloadImage($(this).attr('alt'), $(this).attr('src'));
+        //     $('h1#presence').html($(this).attr('data-attr-presence'));
+        //     $('h1#count').html($(this).attr('data-attr-count'));
+        // });
+
     }, function(error) {
         displayMessage('error', 'Unable to retrieve previous transactions');
+        busyIndicator(false);
     });
 }
 
@@ -198,6 +243,9 @@ function getDataImageFromUrl (callBack) {
 }
 
 function sendToAPI (imageData, productId, fromUrl=false) {
+
+    busyIndicator(true);
+
     var formData = new FormData();
     var fileName = $('#imageData').attr('data-attr-filename');
     
@@ -223,18 +271,28 @@ function sendToAPI (imageData, productId, fromUrl=false) {
             } else {
                 $('h1#presence').html(data.data.result.presence);
                 $('h1#count').html(data.data.result.count);
-                init_transactions();
+                init_transactions(0, transactionPerPage);
             }
+            busyIndicator(false);
         }, function(error) {
             $('h1#presence').html('');
             $('h1#count').html('');
             displayMessage('error', error.message);
+            busyIndicator(false);
         });
+}
+
+function busyIndicator (display = true) {
+    if (display) {
+        $('#busy').addClass('active-process');
+    } else {
+        $('#busy').removeClass('active-process');
+    }
 }
 
 $(document).ready(function(){
     init_dropzone();
-    init_transactions();
+    init_transactions(0, transactionPerPage);
 
     do_request('GET', skuListLocation, null, function(data){
         $('#productSKU').autocomplete({
@@ -289,7 +347,7 @@ $(document).ready(function(){
         e.preventDefault();
         do_request('DELETE', transactionsLocation, null, function(data){
             displayMessage('success', 'History cleared');
-            init_transactions();
+            init_transactions(0, transactionPerPage);
         }, function(error){
             displayMessage('error', 'Unable to clear history');
         });
