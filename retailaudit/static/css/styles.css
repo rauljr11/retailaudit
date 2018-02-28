@@ -243,6 +243,11 @@ nav a.p-2:hover {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+ 
+.transaction-item {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
 
 @keyframes spin {
