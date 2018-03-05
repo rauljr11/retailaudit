@@ -38,6 +38,7 @@ var init_dropzone = function() {
 };
 
 var init_transactions = function(page, perPage) {
+    page = parseInt(page);
     var urlTransaction = transactionsLocation+'?start='+page+'&length='+perPage;
     busyIndicator(true);
     do_request('GET', urlTransaction, null, function(data) {
@@ -53,29 +54,37 @@ var init_transactions = function(page, perPage) {
         //display the fecth history in the thumbnail container
         for (var x = 0 in list) {
             var imgUrl = baseImgUrl.replace('transid',list[x].trans_id);
-            thumbnailParent.append('<div class="transaction-item col-sm-2 float-left"><img id="prevTrans" class="img-fluid mx-auto d-block" src="'+imgUrl+'" alt="'+list[x].fname+'" list-attr-presence="'+list[x].result.presence+'" list-attr-count="'+list[x].result.count+'"></div>');
+            thumbnailParent.append('<div class="transaction-item col-sm-2 float-left"><img id="prevTrans" class="img-fluid mx-auto d-block" src="'+imgUrl+'" alt="'+list[x].fname+'" data-attr-presence="'+list[x].result.presence+'" data-attr-count="'+list[x].result.count+'"></div>');
         }
 
         //bind click event on the images for diplay
         thumbnailParent.on('click', 'img#prevTrans', function(e){
             e.preventDefault();
-            e.stopPropagation();
+            e.stopImmediatePropagation();
             preloadImage($(this).attr('alt'), $(this).attr('src'));
             $('h1#presence').html($(this).attr('data-attr-presence'));
             $('h1#count').html($(this).attr('data-attr-count'));
         });
 
         //contruct pagination
+        var active = '';
         paginationEl.html('');
         for (var x = 0; x<pages; x++) {
-            var active = (((x*data.range.length))==page) ? 'active' : '';
-            paginationEl.append('<li class="page-item '+active+'"><a class="page-link" href="#" data-attr-start="'+(x*data.range.length)+'" data-attr-length="'+data.range.length+'">'+(x+1)+'</a></li>');
+            if (((x*data.range.length))==page) {
+                disabled = 'disabled';
+                active = 'active';
+            } else {
+                disabled = '';
+                active = '';
+            }
+            
+            paginationEl.append('<li class="page-item '+active+' '+disabled+'"><a class="page-link" href="#" data-attr-start="'+(x*data.range.length)+'" data-attr-length="'+data.range.length+'">'+(x+1)+'</a></li>');
         }
         
         disabled = (page == 0) ? 'disabled' : '';
         paginationEl.prepend('<li class="page-item '+disabled+'"><a class="page-link" href="#" aria-label="Previous" data-attr-start="'+(page-data.range.length)+'" data-attr-length="'+data.range.length+'"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>');
 
-        disabled = (page == pages) ? 'disabled' : '';
+        disabled = (page == (pages-1)*data.range.length) ? 'disabled' : '';
         paginationEl.append('<li class="page-item '+disabled+'"><a class="page-link" href="#" aria-label="Next" data-attr-start="'+(page+data.range.length)+'" data-attr-length="'+data.range.length+'"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>');
 
 
